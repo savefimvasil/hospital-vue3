@@ -6,14 +6,16 @@ import { mockHospitals } from '@/mocks/hospitals/hospitals'
 import type { IHospitalInventoryItem } from '@/models/hospital/HospitalInventory'
 import { mockInventories } from '@/mocks/hospitals/inventory'
 import { FilterTypes } from '@/models/enums/filterTypes'
-import type { SortTypes as SortTypesType } from '@/models/enums/sortTypes'
 import { SortTypes } from '@/models/enums/sortTypes'
+import { useCustomArray } from '@/composables/useCustomArray'
 
 export const useHospitalStore = defineStore('hospitalStore', () => {
   const hospital: Ref<Hospital | undefined> = ref(undefined)
   const selectedFilters: Ref<{ [key: string]: string }> = ref({})
   const selectedSort: Ref<{ [key: string]: string }> = ref({})
   const hospitalInventoryToShow: Ref<IHospitalInventoryItem[]> = ref([])
+
+  const { sortByField } = useCustomArray()
 
   const clearHospital = () => {
     hospital.value = undefined
@@ -83,22 +85,6 @@ export const useHospitalStore = defineStore('hospitalStore', () => {
   })
 
   const getFilteredInventory = computed((): IHospitalInventoryItem[] => {
-    function sortByField(
-      arr: IHospitalInventoryItem[],
-      field: keyof IHospitalInventoryItem,
-      order: SortTypesType = SortTypes.asc
-    ) {
-      return arr.slice().sort((a: any, b: any) => {
-        let comparison
-        if (typeof a[field] === 'number') {
-          comparison = +a[field] - +b[field]
-        } else {
-          comparison = a[field] > b[field] ? 1 : a[field] < b[field] ? -1 : 0
-        }
-        return order === 'desc' ? comparison * -1 : comparison
-      })
-    }
-
     if (getInventory?.value) {
       let inventoryToFilter = [...(getInventory?.value?.items as IHospitalInventoryItem[])]
 
@@ -129,7 +115,7 @@ export const useHospitalStore = defineStore('hospitalStore', () => {
 
       //sort
       if (Object.values(selectedSort.value).length && Object.values(selectedSort.value)[0]) {
-        hospitalInventoryToShow.value = sortByField(
+        hospitalInventoryToShow.value = sortByField<IHospitalInventoryItem>(
           inventoryToFilter,
           Object.keys(selectedSort.value)[0] as keyof IHospitalInventoryItem,
           Object.values(selectedSort.value)[0] as SortTypes || SortTypes.none
