@@ -5,7 +5,6 @@ import { computed, ref, type Ref } from 'vue'
 import { mockHospitals } from '@/mocks/hospitals/hospitals'
 import type { IHospitalInventoryItem } from '@/models/hospital/HospitalInventory'
 import { mockInventories } from '@/mocks/hospitals/inventory'
-import { FilterTypes } from '@/models/enums/filterTypes'
 import { SortTypes } from '@/models/enums/sortTypes'
 import { useCustomArray } from '@/composables/useCustomArray'
 
