@@ -19,7 +19,7 @@ export const useCustomArray = () => {
     })
   }
 
-  const filterByFields = <Type>(arr: Type[], selectedFilters: { [key]: any }, setOfFilters) => {
+  const filterByFields = <Type>(arr: Type[], selectedFilters: { [key: string]: string }, setOfFilters: IFilter[] | undefined) => {
     let inventoryToFilter = [...arr as Type[]]
 
     // filter

@@ -1,6 +1,6 @@
-import type { UserData } from '@/models/auth/User'
+import type { User } from '@/models/auth/User'
 
-export const mockUsers: UserData[] = [
+export const mockUsers: User[] = [
   {
     username: "user",
     password: "password",

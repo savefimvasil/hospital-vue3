@@ -22,6 +22,10 @@ export class Hospital {
     this.filters = new HospitalFilters(this.inventory.getItems())
   }
 
+  getId() {
+    return this.id
+  }
+
   getFilters() {
     return this.filters.getFilters()
   }

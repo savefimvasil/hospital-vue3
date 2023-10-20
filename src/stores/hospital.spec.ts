@@ -16,17 +16,17 @@ describe('Hospital store', () => {
 
     const data = await setHospital(0)
     expect(getHospital.value).toBe(undefined)
-    expect(data.message).toBe('Request failed')
+    expect((data as Error)?.message).toBe('Request failed')
 
     await setHospital(1)
-    expect(getHospital.value.id).toBe(1)
+    expect(getHospital.value?.getId()).toBe(1)
     // second hospital has 1 inventory items
-    expect(getInventory.value.getItems().length).toBe(5)
+    expect(getInventory?.value?.getItems().length).toBe(5)
 
     await setHospital(2)
-    expect(getHospital.value.id).toBe(2)
+    expect(getHospital.value?.getId()).toBe(2)
     // second hospital has 2 inventory items
-    expect(getInventory.value.getItems().length).toBe(2)
+    expect(getInventory?.value?.getItems().length).toBe(2)
   })
 
   it('check count of filters', async () => {
@@ -51,7 +51,7 @@ describe('Hospital store', () => {
     const { getHospital } = storeToRefs(store)
 
     await setHospital(1)
-    expect(getHospital.value?.id).toBe(1)
+    expect(getHospital.value?.getId()).toBe(1)
     clearHospital()
     expect(getHospital.value).toBe(undefined)
   })
