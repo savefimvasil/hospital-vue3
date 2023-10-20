@@ -15,7 +15,7 @@ export const useHospitalStore = defineStore('hospitalStore', () => {
   const selectedSort: Ref<{ [key: string]: string }> = ref({})
   const hospitalInventoryToShow: Ref<IHospitalInventoryItem[]> = ref([])
 
-  const { sortByField } = useCustomArray()
+  const { sortByField, filterByFields } = useCustomArray()
 
   const clearHospital = () => {
     hospital.value = undefined
@@ -86,32 +86,14 @@ export const useHospitalStore = defineStore('hospitalStore', () => {
 
   const getFilteredInventory = computed((): IHospitalInventoryItem[] => {
     if (getInventory?.value) {
-      let inventoryToFilter = [...(getInventory?.value?.items as IHospitalInventoryItem[])]
+      const inventoryToFilter = [...(getInventory?.value?.items as IHospitalInventoryItem[])]
 
       // filter
-      Object.keys(selectedFilters.value).forEach((key) => {
-        inventoryToFilter = inventoryToFilter.filter((item) => {
-          if (item[key as keyof IHospitalInventoryItem]) {
-            const currentFilterObject = getSetOfFilters?.value?.find((item) => item.name === key)
-
-            if ([FilterTypes.input, FilterTypes.number].includes(currentFilterObject?.type as FilterTypes)) {
-              return String(item[key as keyof IHospitalInventoryItem]).includes(
-                selectedFilters.value[key]
-              )
-            } else if (currentFilterObject?.type === FilterTypes.dropdown) {
-              if (selectedFilters.value[key]) {
-                return (
-                  String(item[key as keyof IHospitalInventoryItem]) === selectedFilters.value[key]
-                )
-              }
-            }
-
-            return true
-          }
-        })
-      })
-
-      hospitalInventoryToShow.value = inventoryToFilter
+      hospitalInventoryToShow.value = filterByFields<IHospitalInventoryItem>(
+        (getInventory?.value?.items as IHospitalInventoryItem[]),
+        selectedFilters?.value,
+        getSetOfFilters?.value
+      )
 
       //sort
       if (Object.values(selectedSort.value).length && Object.values(selectedSort.value)[0]) {

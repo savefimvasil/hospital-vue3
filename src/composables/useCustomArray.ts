@@ -1,4 +1,6 @@
 import { SortTypes, SortTypes as SortTypesType } from '@/models/enums/sortTypes'
+import { FilterTypes } from '@/models/enums/filterTypes'
+import type { IFilter } from '@/models/base/filter'
 
 export const useCustomArray = () => {
   const sortByField = <Type>(
@@ -17,7 +19,37 @@ export const useCustomArray = () => {
     })
   }
 
+  const filterByFields = <Type>(arr: Type[], selectedFilters: { [key]: any }, setOfFilters) => {
+    let inventoryToFilter = [...arr as Type[]]
+
+    // filter
+    Object.keys(selectedFilters).forEach((key) => {
+      inventoryToFilter = inventoryToFilter.filter((item) => {
+        if (item[key as keyof Type]) {
+          const currentFilterObject = setOfFilters?.find((item) => item.name === key)
+
+          if ([FilterTypes.input, FilterTypes.number].includes(currentFilterObject?.type as FilterTypes)) {
+            return String(item[key as keyof Type]).includes(
+              selectedFilters[key]
+            )
+          } else if (currentFilterObject?.type === FilterTypes.dropdown) {
+            if (selectedFilters[key]) {
+              return (
+                String(item[key as keyof Type]) === selectedFilters[key]
+              )
+            }
+          }
+
+          return true
+        }
+      })
+    })
+
+    return inventoryToFilter
+  }
+
   return {
-    sortByField
+    sortByField,
+    filterByFields
   }
 }
